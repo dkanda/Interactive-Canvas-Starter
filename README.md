@@ -48,4 +48,3 @@ The chat feature is powered by a [Realtime Firebase Database](https://firebase.g
 ### Running this Sample
 + You can test your Action on any Google Assistant-enabled device on which the Assistant is signed into the same account used to create this project. Just say or type, “OK Google, talk to my test app”.
 + You can also use the Actions on Google Console simulator to test most features and preview on-device behavior.
-+ To hide the debug overlay, uncomment the code below `/* Uncomment below to disable the debug overlay */` in `public/css/main.css`.

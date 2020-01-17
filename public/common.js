@@ -34,13 +34,13 @@ var doSSML = function(){
 }
 
 var showVideo = function(){
-	var embedVideo = `<video preload="auto" controls="controls" autoplay="autoplay">
+	var embedVideo = `<video preload="auto" controls="controls" autoplay="autoplay" height="200px">
    <source src="https://www.mainconcept.com/fileadmin/user_upload/products/Source_out.mp4"></video>`;
 	document.getElementById('stage').innerHTML = embedVideo;
 }
 
 var showChat = function(){
-	document.getElementById('stage').innerHTML = `<div id="chatDisplay" style="height:303px;overflow:scroll"></div><div onclick="addChat(userName + ': Awesome')" class="btn">Awesome</div>&nbsp;<div onclick="addChat(userName + ': Woot!')" class="btn">Woot!</div>`;
+	document.getElementById('stage').innerHTML = `<div id="chatDisplay" style="height:200px;overflow:scroll"></div><div onclick="addChat(userName + ': Awesome')" class="btn">Awesome</div>&nbsp;<div onclick="addChat(userName + ': Woot!')" class="btn">Woot!</div>`;
 	// Start Listening to the chat.
 	userName = createUser();
 	database.ref("/chat/").on("child_added", updateChat);

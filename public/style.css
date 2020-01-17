@@ -21,8 +21,16 @@
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
+#stage {
+	position:relative;
+	top:0px;
+	height:80%;
+}
+
 #footer{
-	z-index:1001;
+	bottom: 0px;
+	position: absolute;
+	right: 0px;
 }
 
 .btn-blue{

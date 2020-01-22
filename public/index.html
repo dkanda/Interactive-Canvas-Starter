@@ -1,114 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta content="ie=edge" http-equiv="x-ua-compatible" />
-		<meta
-			content="width=device-width, initial-scale=1, shrink-to-fit=no"
-			name="viewport"
-		/>
-	  	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-		
-	  	<script src="https://www.gstatic.com/firebasejs/live/3.6/firebase.js"></script>
-	    <script src="config.js"></script>
-		<!-- fonts -->
-		<link href="https://fonts.googleapis.com/css?family=Titillium+Web:400,700&display=swap" rel="stylesheet">
-		<link href="style.css" rel="stylesheet">
-		<script src="common.js"></script>
-		<script
-			type="text/javascript"
-			src="https://www.gstatic.com/assistant/interactivecanvas/api/interactive_canvas.min.js"
-		></script>
-	</head>
-	<body style="font-family: 'Titillium Web', sans-serif;padding:100px;background-color:white; margin:0 auto 0">
-		<div id="overlay" style="top: 0px; left: 0px; width: 100%; height: 100%; z-index: 1000; background-color: black; position: absolute;display:none;">
-			<h1 style="color:white;text-align:center">
-				Rotate Your Device to Continue
-			</h1>
-		</div>
-		<!-- <div id="noclick" style="z-index:1000;width:100%;height:100%;position:absolute;top:0px;left:0px;"></div> -->
-		<div id="stage">
-			<img src="assistant.gif">
-		</div>
-		<div id="footer">
-			Tap or say an option to learn more:
-			<div class="btn btn-blue" id="videoBtn">Video</div>
-			<div class="btn btn-red" id="ssmlBtn">SSML</div>
-			<div class="btn btn-green" id="chatBtn">Chat</div>
-		</div>
-	</body>
-	<script>
-	
+
+<head>
+	<meta charset="UTF-8" />
+	<meta content="ie=edge" http-equiv="x-ua-compatible" />
+	<meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+	<script src="https://www.gstatic.com/firebasejs/live/3.6/firebase.js"></script>
+	<script src="config.js"></script>
+	<!-- fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Titillium+Web:400,700&display=swap" rel="stylesheet">
+	<link href="style.css" rel="stylesheet">
+	<script src="common.js"></script>
+	<script type="text/javascript"
+		src="https://www.gstatic.com/assistant/interactivecanvas/api/interactive_canvas.min.js"></script>
+</head>
+
+<body style="font-family: 'Titillium Web', sans-serif;padding:100px;background-color:white; margin:0 auto 0">
+	<div id="overlay"
+		style="top: 0px; left: 0px; width: 100%; height: 100%; z-index: 1000; background-color: black; position: absolute;display:none;">
+		<h1 style="color:white;text-align:center">
+			Rotate Your Device to Continue
+		</h1>
+	</div>
+	<!-- <div id="noclick" style="z-index:1000;width:100%;height:100%;position:absolute;top:0px;left:0px;"></div> -->
+	<div id="stage">
+		<img src="assistant.gif">
+	</div>
+	<div id="footer">
+		Tap or say an option to learn more:
+		<div class="btn btn-blue" id="videoBtn">Video</div>
+		<div class="btn btn-red" id="ssmlBtn">SSML</div>
+		<div class="btn btn-green" id="chatBtn">Chat</div>
+	</div>
+</body>
+<script>
+
 	// Sends responses from Assistant to our game element
 	function updateHandler(data) {
-	    console.log('onUpdate', JSON.stringify(data));
-	    if (data.command == "SSML"){
+		console.log('onUpdate', JSON.stringify(data));
+		if (data.command == "SSML") {
 			doSSML();
-	    }
-	    else if (data.command == "VIDEO"){
+		}
+		else if (data.command == "VIDEO") {
 			showVideo();
-	    }
-	    else if (data.command == "CHAT"){
+		}
+		else if (data.command == "CHAT") {
 			showChat();
-	    }
+		}
 	}
 	// Handles whenever a ssml mark is encountered in the tts. 
 	// https://developers.google.com/assistant/interactivecanvas/reference/interactivecanvas#onttsmark
 	function ttsMarkHandler(mark) {
 		console.log(mark);
 		let date = new Date();
-		dateStr = "<b>" + date.getHours() + ":" +  date.getMinutes() + ":" + date.getSeconds() + ":</b> ";
-	    document.getElementById('output').innerHTML =  document.getElementById('output').innerHTML + dateStr + mark + '<br />';
+		dateStr = "<b>" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ":</b> ";
+		document.getElementById('output').innerHTML = document.getElementById('output').innerHTML + dateStr + mark + '<br />';
 	}
 
 	// Setup for AoG
 	window.assistantCallbacks = {
 		onUpdate: updateHandler,
-	    onTtsMark: ttsMarkHandler
+		onTtsMark: ttsMarkHandler
 	};
 
 	// Check if canvas has loaded.
 	try {
 		interactiveCanvas.ready(assistantCallbacks);
-		document.querySelector("body").addEventListener("click", function(event) {
-			console.log('Whoa, slow down there turbo')
-		         //event.preventDefault();
+
+		// Button Listeners
+		document.querySelector("#videoBtn").addEventListener("click", function (event) {
+			console.log('Video Pressed')
+			interactiveCanvas.sendTextQuery('Video')
+			event.preventDefault();
 		}, false);
-		
-		document.querySelector("#videoBtn").addEventListener("click", function(event) {
-			  console.log('Video Pressed')
-			  interactiveCanvas.sendTextQuery('Video')
-		         event.preventDefault();
-		}, false);
-		
-		document.querySelector("#ssmlBtn").addEventListener("click", function(event) {
+
+		document.querySelector("#ssmlBtn").addEventListener("click", function (event) {
 			console.log('SSML Pressed')
 			interactiveCanvas.sendTextQuery('SSML')
-		         event.preventDefault();
+			event.preventDefault();
 		}, false);
-		
-		document.querySelector("#chatBtn").addEventListener("click", function(event) {
+
+		document.querySelector("#chatBtn").addEventListener("click", function (event) {
 			console.log('Chat Pressed')
 			interactiveCanvas.sendTextQuery('Chat')
-		         event.preventDefault();
+			event.preventDefault();
 		}, false);
-		
+
 		// Set body based on the injected header height
+		// https://developers.google.com/assistant/interactivecanvas/reference/interactivecanvas#getheaderheightpx
 		setHeaderHeight(interactiveCanvas);
 		console.log('Interactive Canvas initalized');
 	} catch (e) {
 		console.error(`Error initializing Interactive Canvas: ${e}`);
 	}
-	</script>
-	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<!-- Please don't remove this, it helps me measure success -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-145880400-1"></script>
-	<script>
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
+</script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<!-- Please don't remove this, it helps me measure success -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-145880400-1"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag() { dataLayer.push(arguments); }
+	gtag('js', new Date());
+	gtag('config', 'UA-145880400-1');
+</script>
 
-	  gtag('config', 'UA-145880400-1');
-	</script>
-	
 </html>

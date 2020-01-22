@@ -23,46 +23,68 @@ const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
 
 const app = dialogflow({ debug: true });
 
+// Configuration
+
+const TARGET_PHONES = true;
+const TARGET_SMART_DISPLAYS = true;
+
+// End Configuration
+
+// CONSTANTS
+
+const WEB_BROWSER = 'actions.capability.WEB_BROWSER';
+const CANVAS = 'actions.capability.INTERACTIVE_CANVAS';
+
+// END CONSTANTS
+
 app.intent('Default Fallback Intent', (conv) => {
-	conv.ask(conv.input.raw);
+  conv.ask(conv.input.raw);
+  conv.ask(new HtmlResponse({
+    url: `https://${firebaseConfig.projectId}.firebaseapp.com`,
+  }));
+})
+
+app.intent('Default Welcome Intent', (conv) => {
+  // Check surface capabilities to restrict to certain surfaces.
+  if (!conv.surface.capabilities.has(CANVAS)
+    || (conv.surface.capabilities.has(WEB_BROWSER) && TARGET_SMART_DISPLAYS)
+    || (!conv.surface.capabilities.has(WEB_BROWSER) && TARGET_PHONES)) {
+    let ssml = `<speak>Sorry, it looks like this device does not support canvas or support has been disabled.</speak>`;
+    conv.close(ssml)
+  } else {
+    let ssml = `<speak>Welcome to the Canvas Example Action. Tap the buttons below to see different features of Canvas or speak your choice like, Show me a video</speak>`;
+    conv.add(ssml)
     conv.ask(new HtmlResponse({
       url: `https://${firebaseConfig.projectId}.firebaseapp.com`,
     }));
-})
+  }
+});
 
-app.intent('Default Welcome Intent', (conv) => {  
-   let ssml = `<speak>Welcome to the Canvas Example Action. Tap the buttons below to see different features of Canvas or speak your choice like, Show me a video</speak>`;
-   conv.add(ssml)
-   conv.ask(new HtmlResponse({
+app.intent('SSML', (conv) => {
+  let ssml = `<speak>This is server side ssml with <mark name="custom_marks"/> custom marks. You can use this marks to trigger <mark name="trigger"/> animation in your canvas action. </speak>`;
+  conv.add(ssml)
+  conv.add(new HtmlResponse({
+    data: {
+      command: 'SSML',
+    },
     url: `https://${firebaseConfig.projectId}.firebaseapp.com`,
   }));
 });
 
-app.intent('SSML', (conv) => {  
-    let ssml = `<speak>This is server side ssml with <mark name="custom_marks"/> custom marks. You can use this marks to trigger <mark name="trigger"/> animation in your canvas action. </speak>`;
-    conv.add(ssml)
-   conv.add(new HtmlResponse({
-      data: {
-        command: 'SSML',
-      },
+app.intent('Watch a video', (conv) => {
+  conv.add(new HtmlResponse({
+    data: {
+      command: 'VIDEO',
+    },
     url: `https://${firebaseConfig.projectId}.firebaseapp.com`,
   }));
 });
 
-app.intent('Watch a video', (conv) => {  
-   conv.add(new HtmlResponse({
-      data: {
-        command: 'VIDEO',
-      },
-    url: `https://${firebaseConfig.projectId}.firebaseapp.com`,
-  }));
-});
-
-app.intent('Chat', (conv) => {  
-   conv.add(new HtmlResponse({
-      data: {
-        command: 'CHAT',
-      },
+app.intent('Chat', (conv) => {
+  conv.add(new HtmlResponse({
+    data: {
+      command: 'CHAT',
+    },
     url: `https://${firebaseConfig.projectId}.firebaseapp.com`,
   }));
 });
